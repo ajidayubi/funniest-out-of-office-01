@@ -31,10 +31,24 @@ import os
 
 REPLY = "I'm away until Monday. I'm not ignoring you — I'm ignoring everyone, equally, with love."
 
+# The sealed gate: 1 to 140 characters, one line, not only whitespace.
+MAX_CHARS = 140
+
 DEFAULT_OUTPUT = "/output/entry.txt"
 
 
+def check_reply(reply: str) -> None:
+    """Fail loudly instead of writing a reply the gate would refuse."""
+    if not reply or not reply.strip():
+        raise SystemExit("reply is empty or only whitespace")
+    if "\n" in reply or "\r" in reply:
+        raise SystemExit("reply must be a single line")
+    if len(reply) > MAX_CHARS:
+        raise SystemExit(f"reply is {len(reply)} characters, over the {MAX_CHARS} limit")
+
+
 def main() -> int:
+    check_reply(REPLY)
     parser = argparse.ArgumentParser(
         description="Write the out-of-office reply to entry.txt."
     )
